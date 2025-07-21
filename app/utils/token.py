@@ -5,7 +5,6 @@ SECRET_KEY = "secret"  # برای پروژه واقعی یک کلید قوی د�
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-
 # This function creates a JWT access token with an expiration time.
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
