@@ -1,3 +1,5 @@
+import sqlite3
+from app.models.db import get_db_connection
 from app.models.db import init_db
 from app.utils.security import hash_password
 
