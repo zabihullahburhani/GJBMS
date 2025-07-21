@@ -1,30 +1,18 @@
-import sqlite3
-from pathlib import Path
-import sys
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-
+from app.models.db import init_db
 from app.utils.security import hash_password
 
-def init():
-    db_file = Path("database/users.db")
-    if db_file.exists():
-        db_file.unlink()  # delete old db
-    conn = sqlite3.connect(db_file)
+def run():
+    # هش پسورد admin
+    hashed_admin_password = hash_password("admin123")
+    init_db()  # ساخت جدول
+    # به‌روزرسانی پسورد admin
+    conn = init_db()
+    conn = sqlite3.connect("database/users.db")
     cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL,
-            role TEXT NOT NULL
-        )
-    """)
-    # default admin
-    hashed = hash_password("admin123")
-    cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ("admin", hashed, "admin"))
+    cur.execute("UPDATE users SET password=? WHERE username=?", (hashed_admin_password, "admin"))
     conn.commit()
     conn.close()
     print("DB initialized with default admin user.")
 
 if __name__ == "__main__":
-    init()
+    run()
