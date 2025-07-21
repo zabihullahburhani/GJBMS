@@ -8,10 +8,11 @@ from app.utils.token import create_access_token, verify_access_token
 templates = Jinja2Templates(directory="templates")
 router = APIRouter()
 
+# نمایش فورم لاگین و ثبت‌نام
 @router.get("/", response_class=HTMLResponse)
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
-
+# لاگین کاربر
 @router.post("/login")
 async def login(request: Request, username: str = Form(...), password: str = Form(...)):
     conn = get_db_connection()
@@ -39,11 +40,11 @@ async def login(request: Request, username: str = Form(...), password: str = For
 
     else:
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid username or password"})
-
+# نمایش فرم ثبت‌نام
 @router.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
-
+# ثبت‌نام کاربر جدید
 @router.post("/register")
 async def register(request: Request, username: str = Form(...), password: str = Form(...)):
     hashed = hash_password(password)
@@ -58,6 +59,7 @@ async def register(request: Request, username: str = Form(...), password: str = 
         conn.close()
         return templates.TemplateResponse("register.html", {"request": request, "error": "Username already exists."})
 
+# نمایش داشبورد بر اساس نقش کاربر
 @router.get("/admin/dashboard", response_class=HTMLResponse)
 async def admin_dashboard(request: Request, access_token: str = Cookie(None)):
     user = verify_access_token(access_token)
