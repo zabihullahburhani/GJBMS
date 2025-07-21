@@ -21,6 +21,7 @@ async def login(request: Request, username: str = Form(...), password: str = For
     user = cur.fetchone()
     conn.close()
 
+
     if user and verify_password(password, user["password"]):
         role = user["role"]
 
@@ -40,10 +41,12 @@ async def login(request: Request, username: str = Form(...), password: str = For
 
     else:
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid username or password"})
+
 # نمایش فرم ثبت‌نام
 @router.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
+
 # ثبت‌نام کاربر جدید
 @router.post("/register")
 async def register(request: Request, username: str = Form(...), password: str = Form(...)):
@@ -68,6 +71,7 @@ async def admin_dashboard(request: Request, access_token: str = Cookie(None)):
     else:
         return RedirectResponse(url="/", status_code=303)
 
+# نمایش داشبورد کاربر عادی
 @router.get("/user/dashboard", response_class=HTMLResponse)
 async def user_dashboard(request: Request, access_token: str = Cookie(None)):
     user = verify_access_token(access_token)
