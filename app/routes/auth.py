@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request, Form, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from app.models.db import get_db_connection
+from app.models.schemas import User, Token
 from app.utils.security import hash_password, verify_password
 from app.utils.token import create_access_token, verify_access_token
 
