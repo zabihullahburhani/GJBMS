@@ -3,6 +3,9 @@ from app.models.db import get_db_connection
 from app.models.db import init_db
 from app.utils.security import hash_password
 
+
+
+
 def run():
     # هش پسورد admin
     hashed_admin_password = hash_password("admin123")
