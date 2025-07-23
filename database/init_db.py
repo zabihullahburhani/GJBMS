@@ -1,23 +1,38 @@
 import sqlite3
-from app.models.db import get_db_connection
-from app.models.db import init_db
-from app.utils.security import hash_password
 
-
-
-
-def run():
-    # هش پسورد admin
-    hashed_admin_password = hash_password("admin123")
-    init_db()  # ساخت جدول
-    # به‌روزرسانی پسورد admin
-    conn = init_db()
+def init_db():
     conn = sqlite3.connect("database/users.db")
     cur = conn.cursor()
-    cur.execute("UPDATE users SET password=? WHERE username=?", (hashed_admin_password, "admin"))
+
+    # جدول کاربران (قبلاً داشتیم)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            role TEXT DEFAULT 'user'
+        )
+    """)
+
+    # ✅ جدول معاملات
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT,
+            date TEXT,
+            detail TEXT,
+            gold_total REAL,
+            gold_remain REAL,
+            dollar_total REAL,
+            dollar_remain REAL,
+            balance_dollar REAL
+        )
+    """)
+
     conn.commit()
     conn.close()
-    print("DB initialized with default admin user.")
+    print("✅ DB initialized with users & transactions tables.")
 
 if __name__ == "__main__":
-    run()
+    init_db()

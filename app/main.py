@@ -1,14 +1,21 @@
 from fastapi import FastAPI
-from app.routes import auth
-from fastapi.staticfiles import StaticFiles
+from app.routes import auth, transaction, logs
+from database.database import database, metadata, engine
+import sqlalchemy
+
+engine = sqlalchemy.create_engine("sqlite:///./database/users.db")
+metadata.create_all(engine)
 
 app = FastAPI()
 
-# اضافه کردن static files برای css و js
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 app.include_router(auth.router)
+app.include_router(transaction.router)
+app.include_router(logs.router, prefix="/logs", tags=["logs"])
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to Gold and Jewelry Business Management System!"}
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()

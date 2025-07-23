@@ -1,18 +1,27 @@
-from fastapi import APIRouter, Request, Form, Cookie
+from fastapi import APIRouter,Depends, Request, Form, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from app.models.db import get_db_connection
 from app.models.schemas import User, Token
 from app.utils.security import hash_password, verify_password
 from app.utils.token import create_access_token, verify_access_token
+from database.database import database, activity_logs
+from datetime import datetime
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter()
+# نمایش لاگ‌های ادمین
+router.get("/admin/logs", response_class=HTMLResponse)
+async def view_logs(request: Request):
+    query = activity_logs.select().order_by(activity_logs.c.timestamp.desc())
+    logs = await database.fetch_all(query)
+    return templates.TemplateResponse("admin_logs.html", {"request": request, "logs": logs})
 
 # نمایش فورم لاگین و ثبت‌نام
 @router.get("/", response_class=HTMLResponse)
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
+
 # لاگین کاربر
 @router.post("/login")
 async def login(request: Request, username: str = Form(...), password: str = Form(...)):
@@ -22,26 +31,39 @@ async def login(request: Request, username: str = Form(...), password: str = For
     user = cur.fetchone()
     conn.close()
 
-
     if user and verify_password(password, user["password"]):
         role = user["role"]
 
         # ساخت توکن
         access_token = create_access_token(data={"sub": username, "role": role})
         
+        # صدا زدن تابع کمکی برای لاگ‌گیری
+        await save_login_log(username, role)
+
         # هدایت بر اساس نقش
         if role == "admin":
             response = RedirectResponse(url="/admin/dashboard", status_code=303)
         else:
             response = RedirectResponse(url="/user/dashboard", status_code=303)
-        
+
         # ذخیره توکن و یوزرنیم در کوکی
-        response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=1800)  # 30 min
+        response.set_cookie(key="access_token", value=access_token, httponly=True, max_age=1800)
         response.set_cookie(key="username", value=username, httponly=True, max_age=1800)
         return response
 
     else:
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid username or password"})
+
+# ثبت لاگ ورود موفق
+async def save_login_log(username: str, role: str):
+    query = activity_logs.insert().values(
+        user_id=username,
+        action="ورود موفق",
+        timestamp=datetime.utcnow(),
+        details=f"کاربر با نقش {role} وارد شد"
+    )
+    await database.execute(query)
+
 
 # نمایش فرم ثبت‌نام
 @router.get("/register", response_class=HTMLResponse)
@@ -98,3 +120,5 @@ async def forgot(request: Request, username: str = Form(...)):
     conn.close()
     message = f"New password for {username} is: {new_password} (change after login!)"
     return templates.TemplateResponse("forgot.html", {"request": request, "message": message})
+
+
