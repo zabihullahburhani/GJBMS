@@ -2,7 +2,8 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, 
 from databases import Database
 import sqlite3
 
-DATABASE_URL = "sqlite:///./database/users.db"
+#DATABASE_URL = "sqlite:///./database/users.db"
+DATABASE_URL = "sqlite:///./test.db"
 
 engine = create_engine(DATABASE_URL)
 database = Database(DATABASE_URL)

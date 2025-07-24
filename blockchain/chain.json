@@ -1,0 +1,22 @@
+[
+    {
+        "index": 0,
+        "timestamp": 1753382774.8705792,
+        "data": {
+            "message": "Genesis Block"
+        },
+        "previous_hash": "0",
+        "nonce": 0,
+        "hash": "06c5b726161d5a74edcff832fbe63bcfc8841ff7e8132f3662514eb976b3bf2e"
+    },
+    {
+        "index": 1,
+        "timestamp": 1753383054.6060083,
+        "data": {
+            "additionalProp1": {}
+        },
+        "previous_hash": "06c5b726161d5a74edcff832fbe63bcfc8841ff7e8132f3662514eb976b3bf2e",
+        "nonce": 0,
+        "hash": "aaeb1db408b96a7189ae086f493e419b512b74786b851257e056a5c2f83f9e87"
+    }
+]

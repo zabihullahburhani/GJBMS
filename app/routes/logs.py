@@ -1,9 +1,14 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request , Cookie
 from pydantic import BaseModel
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
 from typing import List, Optional
 from datetime import datetime
+from app.utils.token import verify_access_token
 from database.database import database, metadata, engine, activity_logs
 
+
+templates = Jinja2Templates(directory="templates")
 router = APIRouter()
 
 # ساخت جدول (فقط یکبار نیاز است)
@@ -48,3 +53,25 @@ async def get_logs(
         query = query.where(activity_logs.c.timestamp <= end_date)
     query = query.order_by(activity_logs.c.timestamp.desc())
     return await database.fetch_all(query)
+
+
+# نمایش لاگ‌های ادمین با فیلتر بر اساس تاریخ و کاربر
+# این تابع فقط برای ادمین‌ها قابل دسترسی است
+@router.get("/admin/logs", response_class=HTMLResponse)
+async def view_logs(request: Request, access_token: Optional[str] = Cookie(None)):
+    if not access_token:
+        # کوکی موجود نیست → کاربر را بفرست به صفحه لاگین
+        return RedirectResponse(url="/", status_code=303)
+
+    user_data = verify_access_token(access_token)
+    if not user_data or user_data.get("role") != "admin":
+        return RedirectResponse(url="/", status_code=303)
+
+    query = activity_logs.select().order_by(activity_logs.c.timestamp.desc())
+    logs = await database.fetch_all(query)
+
+    return templates.TemplateResponse("admin_logs.html", {
+        "request": request,
+        "logs": logs
+    })
+
