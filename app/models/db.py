@@ -1,27 +1,21 @@
-import sqlite3
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-DB_NAME = "database/users.db"
+# مسیر دقیق دیتابیس شما
+DATABASE_URL = "sqlite:///../../database/database_pasa.db"
 
-def get_db_connection():
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row  # برای دسترسی dict مانند
-    return conn
+engine = create_engine(
+    DATABASE_URL, connect_args={"check_same_thread": False}
+)
 
-# (اختیاری) تابع برای ایجاد جداول
-def init_db():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        role TEXT NOT NULL
-    )
-    """)
-    #
-    # اضافه کردن admin پیش‌فرض
-    cur.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)",
-                ("admin", "$2b$12$examplehashedpassword", "admin"))
-    conn.commit()
-    conn.close()
+# ایجاد SessionLocal برای ارتباط با دیتابیس
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+# این متد رو اضافه کن برای import
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

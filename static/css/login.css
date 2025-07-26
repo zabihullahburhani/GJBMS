@@ -1,0 +1,43 @@
+@font-face {
+    font-family: 'Vazir';
+    src: url('/static/fonts/Vazir-Light-UI.woff2') format('woff2'),
+         url('/static/fonts/Vazir-Light-UI.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    background-color: #121212; /* زمینه سیاه */
+    font-family: 'Vazir', sans-serif;
+    color: #d4af37; /* طلایی ملایم */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 2rem;
+    border-radius: 10px;
+    width: 320px;
+    box-shadow: 0 0 10px #d4af37;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #d4af37;
+}
+
+.btn-gold {
+    background-color: #d4af37;
+    color: #000;
+    width: 100%;
+}
+
+.form-control {
+    background-color: #222;
+    border: 1px solid #d4af37;
+    color: #d4af37;
+}
