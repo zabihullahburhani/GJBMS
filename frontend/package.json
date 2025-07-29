@@ -11,6 +11,7 @@
   "dependencies": {
     "@fontsource/vazirmatn": "^5.2.6",
     "next": "15.4.4",
+    "postcss-rtlcss": "^5.7.1",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
