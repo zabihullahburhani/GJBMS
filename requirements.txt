@@ -1,0 +1,39 @@
+# ------------------------------------------
+# Main Framework
+fastapi
+
+# ASGI server
+uvicorn[standard]
+
+# Database ORM & Migration
+sqlalchemy
+alembic
+
+# Environment variables
+python-dotenv
+
+# Password hashing
+passlib[bcrypt]
+
+# JWT & security
+python-jose[cryptography]
+
+# Database driver (choose one)
+psycopg2-binary   # برای PostgreSQL
+# اگر SQLite می‌خواهی استفاده کنی، این را لازم نداری
+# sqlite3 داخل استاندارد لایبرری پایتون است
+
+# Logging
+loguru
+
+# Date & time utils (اختیاری ولی مفید)
+python-dateutil
+
+# Validation & parsing
+pydantic
+
+# Testing (اختیاری برای توسعه)
+pytest
+httpx
+
+# برای فرانت‌اند، جدا npm install خواهیم کرد
