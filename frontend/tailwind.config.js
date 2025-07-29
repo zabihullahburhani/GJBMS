@@ -6,11 +6,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Vazirmatn", "sans-serif"], // این پیش‌فرض فونت وزیر می‌شود
+        vazir: ["Vazirmatn", "sans-serif"],
       },
     },
   },
-  plugins: [
-    require('tailwindcss-rtl')
-  ],
-};
+  plugins: [],
+}
