@@ -21,7 +21,7 @@ export default function AdminDashboard() {
     const userData = {
     fullName: "ذبیح الله برهانی",
     role: "ادمین",
-    phone: "0700123456",
+    phone: "0705002913",
   };
 
 
